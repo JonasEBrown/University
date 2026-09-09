@@ -1,0 +1,88 @@
+[
+	{
+		"name": "Basic",
+		"title": "Virtual Build",
+		"supportHours": 0,
+		"price": 0,
+		"desc": "Assemble your PC virtually and get an estimated price breakdown.",
+		"features": [
+			{
+				"icon": "Check",
+				"color": "var(--green-accent)",
+				"text": "Interactive <b>3D PC builder</b>."
+			},
+			{
+				"icon": "Check",
+				"color": "var(--green-accent)",
+				"text": "Stay on target with <b>budget tracking</b>."
+			},
+			{
+				"icon": "Check",
+				"color": "var(--green-accent)",
+				"text": "<b>Guided questions</b> to help with choices."
+			},
+			{
+				"icon": "Check",
+				"color": "var(--green-accent)",
+				"text": "Exportable <b>price breakdown</b> for your build."
+			}
+		],
+		"color": "text-(--secondary-text)",
+		"plan": "basic"
+	},
+	{
+		"name": "Build",
+		"title": "Fully Assembled PC",
+		"supportHours": 1,
+		"desc": "Turn your virtual build into a real machine.",
+		"features": [
+			{
+				"icon": "ArrowRight",
+				"color": "var(--green-accent)",
+				"text": "Everything from our <b>Basic Plan</b>."
+			},
+			{
+				"icon": "Check",
+				"color": "var(--green-accent)",
+				"text": "Assembly & basic testing."
+			},
+			{
+				"icon": "Check",
+				"color": "var(--green-accent)",
+				"text": "Optional software setup."
+			},
+			{
+				"icon": "ClockFading",
+				"color": "var(--secondary-text)",
+				"text": "1 support hour."
+			}
+		],
+		"color": "text-(--primary-text)",
+		"plan": "build"
+	},
+	{
+		"name": "Pro",
+		"title": "Build + Ongoing Support",
+		"supportHours": 3,
+		"desc": "Your custom build, plus extra support.",
+		"features": [
+			{
+				"icon": "ArrowRight",
+				"color": "var(--green-accent)",
+				"text": "Everything from our <b>Build Plan</b>."
+			},
+			{
+				"icon": "Percent",
+				"color": "var(--green-accent)",
+				"text": "Discount on future upgrade labour costs."
+			},
+			{
+				"icon": "ClockPlus",
+				"color": "var(--secondary-text)",
+				"text": "An additional <b>3 support hours</b>."
+			}
+		],
+		"color": "bg-gradient-to-r from-(--orange-accent)/85 to-(--primary-text) leading-tight bg-clip-text text-transparent",
+		"plan": "pro"
+	}
+]

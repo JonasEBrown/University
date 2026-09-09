@@ -1,0 +1,54 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+    We are given the non-linear ODE
+    \\
+    \begin{center*}
+        \begin{align*}
+            & \frac{dx}{dt} = \sin(x^{3}) && \\
+        \end{align*}
+    \end{center*}\\
+    Let $f(x) = \sin(x^{3})$ and with $\Delta t = 0.1$ gives.
+    Then, with Backward-Euler $x_{n+1}$ becomes
+    \\
+    \begin{center*}
+        \begin{align*}
+            & x_{n+1} = x_{n} + \Delta t f(x_{n+1}) && \\
+            & x_{n+1} = x_{n} + \Delta t \sin(x_{n+1}^{3}) && \\
+        \end{align*}
+    \end{center*}\\
+    Since $x_{n+1}$ is within the $\sin$ component of the equation, we cannot rearrange this
+    so that $x_{n+1}$ is the subject, hence the method is implicit and instead must be solved
+    using
+    \\
+    \begin{center*}
+        \begin{align*}
+            & g(x_{n+1}) = x_{n+1} - x_{n} - \Delta t \sin(x_{n+1}^{3}) = 0 && \\
+        \end{align*}
+    \end{center*}\\
+    This is a non-linear equation and hence we need to iterate using
+    the Newton-Raphson method to solve $g(x_{n+1}) = 0$:
+    \\
+    \begin{center*}
+        \begin{align*}
+            & z^{(k+1)} = z^{(k)} - \frac{g(z^{(k)})}{g'(z^{(k)})} \quad \text{with our initial guess } z^{(0)} = x_{n}.&& \\
+            & g(z) = z - x_{n} - \Delta t \sin(z^{3}) && \\
+            & \implies g'(z) = 1 - 3z^{2} \Delta t \cos(z^{3}) && \\
+        \end{align*}
+    \end{center*}\\
+    Now, using the code I wrote under \hyperref[subsec:implicit-non-linear-ode-appendix]{Appendix: Implicit non-linear ODE} to solve for $x$ with initial conditions $x(0) = 1$ on interval
+    $t \in [0, 5]$ with $\Delta t = 0.1$ gives:
+
+    \begin{figure}[H]
+        \begin{subfigure}
+            \centering
+            \includegraphics[width=230px]{backward-euler-and-newton-raphson}
+            \caption{Plot of $x$ solutions against $t$.}
+            \label{fig:backward-euler-and-newton-raphson}
+        \end{subfigure}
+        \label{fig:backwards-euler}
+    \end{figure} \\
+
+
+\end{document}

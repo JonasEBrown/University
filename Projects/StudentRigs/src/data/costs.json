@@ -1,0 +1,12 @@
+{
+	"assembly": {
+		"hours": {
+			"min": 2,
+			"max": 3
+		},
+		"costPerHour": 40
+	},
+	"support": {
+		"costPerHour": 40
+	}
+}

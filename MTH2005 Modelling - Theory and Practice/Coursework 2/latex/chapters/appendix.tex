@@ -1,0 +1,27 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+    \section{Code}\label{sec:code}
+
+    The original GitHub project is linked \href{https://github.com/TheSilverLeopard/University/tree/projects/MTH2005%20Modelling%20-%20Theory%20and%20Practice/Coursework%202}{here}.
+
+    \subsection*{Optimisation}\label{subsec:optimisation-appendix}
+    \subsubsection{Tolerance and Golden-Search with error evaluation}\label{subsubsec:tolerance-golden-appendix}
+
+    \lstinputlisting[label={lst:golden-code}, style=python]{../code/dichot-golden.py}
+
+    \newpage
+    \subsection*{Multi-component non-linear ODEs}\label{subsec:multi-component-non-linear-odes-appendix}
+
+    \lstinputlisting[label={lst:runge-kutta-code}, style=python]{../code/runge-kutta.py}
+
+    \newpage
+    \subsection*{Implicit non-linear ODE}\label{subsec:implicit-non-linear-ode-appendix}
+
+    \lstinputlisting[label={lst:backward-euler-code}, style=python]{../code/backward-euler.py}
+
+    \newpage
+    \subfile{../chapters/rambling.tex}
+
+\end{document}

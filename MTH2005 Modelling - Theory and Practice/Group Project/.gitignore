@@ -1,0 +1,3 @@
+/rayenv/
+/*.npz
+!/(layers-3&scales-1-2-4)softmax_classifier_trained_data.npz

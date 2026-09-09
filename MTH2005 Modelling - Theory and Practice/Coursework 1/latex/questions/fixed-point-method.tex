@@ -1,0 +1,143 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+    We were given the equation $f(x) = (x + 5)^{1/3} - x + 3 = 0$ in the interval $x \in [3,7]$ and must use
+    the fixed-point method to find a root, $x_{*}$, for any $g(x)$ that converges and verify
+    the root has been found within a numerical error - plotting our results.
+
+    Our $g(x)$ functions (iteration functions) are defined as:
+    \begin{itemize}
+        \item $g_{1}(x) = (x + 5)^{1/3} + 3$,
+        \item $g_{2}(x) = (x - 3)^{3} - 5$.
+    \end{itemize}
+    
+    \section{Convergence of iteration functions}\label{sec:fixed_point_convergence}
+    For some $g_{n}(x)$ to converge, the following conditions must be met:
+    \begin{itemize}
+        \item $f(x)$ must be continuous on the closed interval $[3,7]$,
+        \item $f(x)$ must be differentiable on the open interval $(3,7)$,
+        \item there exists $\xi \in (3,7)$ that brackets the root,
+        \item and some $|g_{n}'(\xi)| < 1$.
+    \end{itemize}
+
+    \subsection*{Is $f(x)$ continuous on $[3,7]$?}\label{subsec:fixed-point-continuous}
+    \underline{Proof:} $(x + 5)$ and $(-x + 3)$ are polynomials, so they are continuous everywhere.
+    The function $a(x) = x^{1/3}$ is continuous $\forall \ x \in \mathbb{R}$,
+    hence $a(x + 5)$ is continuous $\forall \ x \in \mathbb{R}$.
+    So, $a(x + 5) + (-x + 3)$ is continuous $\forall \ x \in \mathbb{R}$.
+    Therefore, $f(x)$ is continuous on the closed interval $[3,7]$.
+
+    \subsection*{Is $f(x)$ differentiable on $(3,7)$?}\label{subsec:fixed-point-differentiable}
+    \underline{Proof:} $(x + 5)$ and $(-x + 3)$ are polynomials, so they are differentiable everywhere.
+    The function $a(x) = x^{1/3}$ is differentiable $\forall \ x \in \mathbb{R}$ with $x \neq 0$.
+    $x \in (3,7)$, so $x + 5 \in (8,12)$ and therefore $x + 5 \neq 0$.
+    Hence, $a(x + 5)$ is differentiable $\forall \ x \in \mathbb{R}$.
+    So, $a(x + 5) + (-x + 3)$ is differentiable $\forall \ x \in \mathbb{R}$.
+    Therefore, $f(x)$ is differentiable on the open interval $(3,7)$.
+
+    \subsection*{Does $(3,7)$ bracket a root?}\label{subsec:fixed-point-brackets-root}
+    This is simple enough to prove.
+    The signs of the values of $f(x)$ must be opposite for the minimum and maximum of the interval $(3,7)$.
+    \begin{itemize}
+        \item $f(3) = (3 + 5)^{1/3} - 3 + 3 = 8^{1/3} = +2$
+        \item $f(7) = (7 + 5)^{1/3} - 7 + 3 = 12^{1/3} - 4 \approx -1.71$
+    \end{itemize}\\
+    The two ends of our interval have opposite signs, hence there is a root in $(3,7)$.
+
+    \subsection*{Do the iterable functions converge?}\label{subsec:fixed-point-iterables-convergence}
+    For a function $g_{n}(x)$ to converge $|g_{n}'(x)| < 1$, so:
+    \begin{itemize}
+        \item Does $g_{1}(x) = (x_{n} + 5)^{1/3} + 3$ converge? \\
+        \\ \underline{Proof:} \\
+        \[g_{1}'(x) = \frac{1}{3}(x_{n} + 5)^{-2/3}\] \\
+        $(x + 5)^{-2/3}$ is decreasing for $x > 0$, so its maximum on $[3,7]$ occurs at $x = 3$.
+        \[\max_{x \in (3,7)} g_{1}(x) = \frac{1}{3}(3 + 5)^{-2/3} =
+        \frac{1}{3} \cdot 8^{-2/3} = \frac{1}{3} \cdot \frac{1}{4} = \frac{1}{12}\] \\
+        So, $\forall \ \xi \in (3,7)$ we have that $|g_{1}'(\xi)| < 1$ and $g_{1}(x)$ converges.
+
+        \item Does $g_{2}(x) = (x_{n} - 3)^{3} - 5$ converge? \\
+        \\ \underline{Proof:} \\
+        \[g_{2}'(x) = 3(x_{n} - 3)^{2}\] \\
+        $(x - 3)^{2}$ is increasing for $x > 0$, so its maximum on $[3,7]$ occurs at $x = 7$.
+        \[\max_{x \in (3,7)} g_{2}(x) = 3(7 - 3)^{2} = 3(4)^{2} = 3 \cdot 16 = 48 \] \\
+        So, $\exists \ \xi \in (3,7)$ where $|g_{2}'(x)| \geq 1$, hence $g_{2}(x)$ does not converge.
+    \end{itemize}
+
+    \subsection*{Conclusion}\label{subsec:fixed-point-conclusion}
+    We have found that a root exists in $[3,7]$ and that $g_{1}(x)$ can be used to find it, as it will converge to $x_{*}$.
+
+    \section{Fixed-point iteration}\label{sec:fixed_point_iteration}
+
+    \subsection*{Proving that $g_{2}(x)$ diverges}\label{subsec:fixed-point-prove-g2-diverges}
+    First, let's quickly look at $g_{2}(x)$:
+    \begin{center*}
+        \begin{align*}
+            & x_{n+1} = g_{2}(x_{n}) = (x_{n} - 3)^{3} - 5 && \\
+            & x_{0} = 6 && \\
+            & x_{1} = g_{2}(6) = (6 - 3)^{3} - 5 = 3^{3} -5 = 22 && \\
+            & x_{2} = 6854 && \\
+            & x_{3} \approx \num{3.2156e11} && \\
+            & \vdots &&
+        \end{align*}
+    \end{center*}\\
+    We can see that, as $n$ increases, $x_{n}$ exponentially increases
+    showing numerically that $g_{2}(x)$ does not converge to $x_{*}$.
+
+    \subsection*{Finding the root with $g_{1}(x)$}\label{subsec:fixed-point-finding-root}
+    Now, let's look at $g_{1}(x)$:
+    \begin{center*}
+        \begin{align*}
+            & x_{n+1} = g_{1}(x_{n}) = (x_{n} + 5)^{1/3} + 3 && \\
+            & x_{0} = 6 && \\
+            & x_{1} = g_{1}(6) = (6 + 5)^{1/3} + 3 = 11^{1/3} + 3 \approx 5.2240 && \\
+            & x_{2} \approx 5.1704 && \\
+            & x_{3} \approx 5.1666 && \\
+            & \vdots && \\
+            & x_{10} \approx 5.1663 &&
+        \end{align*}
+    \end{center*}\\
+    We can see that as $n$ increases, $x \to x_{*}$.
+
+    \subsection*{Verifying the root}\label{subsec:fixed-point-verify-root}
+    Before we get too excited, let's check that what we have found is our root:
+    \begin{center*}
+        \begin{align*}
+            & x_{*} = x_{10} = 5.1663 && \\
+            & f(x_{*}) = (x_{*} + 5)^{1/3} - x + 3 \approx \num{-2.46e-12} \approx 0 && \\
+            & |f(x_{10}) - f(x_{9})| = \num{-3.4637e-11} - \num{-4.8765e-10} \approx \num{4.5301e-10} \approx 0 &&
+        \end{align*}
+    \end{center*}
+
+    \subsection*{Code used to find the root}\label{subsec:fixed-point-code}
+    I ran the following in my terminal (usage covered in
+    \hyperref[subsubsec:fixed-point-method-appendix]{Fixed-point method} under
+    \hyperref[subsec:usage-of-modules]{Usage of modules}):
+    \begin{lstlisting}[style=console,label={lst:fixed-point-method}]
+C:\User\CaseStudy> python main.py fixed-point ./images
+Root: 5.1663
+Error: 0.0000
+    \end{lstlisting}
+
+    Producing these graphs:
+
+    \begin{figure}[H]
+        \centering
+        \begin{subfigure}
+            \centering
+            \includegraphics[width=230px]{fixed-point-all-functions}
+            \label{fig:fixed-point-all-functions}
+        \end{subfigure} \\
+        \begin{subfigure}
+            \includegraphics[width=230px]{fixed-point-g1}
+            \label{fig:fixed-point-g1-iterations}
+        \end{subfigure}
+        \begin{subfigure}
+            \includegraphics[width=230px]{fixed-point-g2}
+            \label{fig:fixed-point-g2-iterations}
+        \end{subfigure}
+        \textbf{Figure:} $f(x)$, $g_{1}(x)$, $g_{2}(x)$, $y = x$, and $g_{n}(x)$ iterations plotted.
+        \label{fig:fixed-point-plots}
+    \end{figure}
+
+\end{document}

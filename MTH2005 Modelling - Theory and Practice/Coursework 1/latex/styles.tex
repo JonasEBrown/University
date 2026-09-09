@@ -1,0 +1,84 @@
+\font\reallybigtenb=cmb10 scaled\magstep3
+\parindent=0pt
+\parskip=4pt
+\baselineskip=12pt
+\oddsidemargin=-1cm
+\textwidth=18cm
+\topmargin=-2cm
+\textheight=24.5cm
+
+\titleformat{\chapter}[display]
+    {\Huge\bfseries}
+    {}
+    {0pt}
+    {\Huge}
+
+\titlespacing*{\chapter}{0pt}{0pt}{2em}
+
+\makeatletter
+\patchcmd{\chapter}{\clearpage}{}{}{}
+\patchcmd{\chapter}{\cleardoublepage}{}{}{}
+\makeatother
+
+\definecolor{pycharm-bg}{HTML}{1E1F22}
+\definecolor{pycharm-fg}{HTML}{BCBEC4}
+\definecolor{pycharm-keyword}{HTML}{CF8E6D}
+\definecolor{pycharm-string}{HTML}{6AAB73}
+\definecolor{pycharm-comment}{HTML}{7A7E85}
+\definecolor{pycharm-ident}{HTML}{BCBEC4}
+\definecolor{pycharm-number}{HTML}{2AACB8}
+\definecolor{pycharm-type}{HTML}{56C1D6}
+
+\lstdefinelanguage{console}{
+    morekeywords={
+        python
+    },
+    morecomment=[l]{#},
+    morestring=[b]",
+    sensitive=true,
+}
+
+\lstdefinestyle{console}{
+    language=console,
+    frame=single,
+    backgroundcolor=\color{black},
+    basicstyle=\small\ttfamily\color{pycharm-fg},
+    keywordstyle=\color{yellow}\bfseries,
+    stringstyle=\color{pycharm-string},
+    commentstyle=\color{pycharm-comment}\itshape,
+    identifierstyle=\color{pycharm-ident},
+    emphstyle=\color{pycharm-fg},
+    showstringspaces=false,
+    breaklines=true,
+}
+
+\lstdefinestyle{python}{
+    language=Python,
+    backgroundcolor=\color{pycharm-bg},
+    basicstyle=\ttfamily\small\color{pycharm-fg},
+    keywordstyle=\color{pycharm-keyword}\bfseries,
+    stringstyle=\color{pycharm-string},
+    commentstyle=\color{pycharm-comment}\itshape,
+    identifierstyle=\color{pycharm-ident},
+    emphstyle=\color{pycharm-fg},
+    showstringspaces=false,
+    breaklines=true,
+    tabsize=4,
+    numbers=none,
+    captionpos=b,
+    frame=single,
+    literate=
+        *{0}{{{\color{pycharm-number}0}}}1
+        {1}{{{\color{pycharm-number}1}}}1
+        {2}{{{\color{pycharm-number}2}}}1
+        {3}{{{\color{pycharm-number}3}}}1
+        {4}{{{\color{pycharm-number}4}}}1
+        {5}{{{\color{pycharm-number}5}}}1
+        {6}{{{\color{pycharm-number}6}}}1
+        {7}{{{\color{pycharm-number}7}}}1
+        {8}{{{\color{pycharm-number}8}}}1
+        {9}{{{\color{pycharm-number}9}}}1
+        {.}{{{\color{pycharm-number}.}}}1
+        {-}{{{\color{pycharm-number}-}}}1
+        {0x}{{{\color{pycharm-number}0x}}}2
+}

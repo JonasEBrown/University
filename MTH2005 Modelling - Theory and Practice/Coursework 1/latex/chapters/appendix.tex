@@ -1,0 +1,79 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+    \section{Code}\label{sec:code}
+
+    The code for the report has been condensed into one executable file.
+    The original GitHub project is linked \href{https://github.com/TheSilverLeopard/University/tree/projects/MTH2005%20Modelling%20-%20Theory%20and%20Practice/Coursework%201}
+    {here}.
+
+    \subsection*{Usage of modules}\label{subsec:usage-of-modules}
+    The code has been structured in a way that allows ease of use and reusability. \\
+    \\
+    Below is a file called \texttt{main.py}, it is an example use of the \texttt{case\_study} module and a shorthand for
+    running any code for the questions:
+    \lstinputlisting[label={lst:code-example-usage}, style=python]{../code-examples/usage-example.py}
+
+    \subsubsection{Fixed-point method}\label{subsubsec:fixed-point-method-appendix}
+    Running this in your console will execute the fixed-point method code and
+    then save the plots to the output directory provided.
+    \begin{lstlisting}[style=console,label={lst:appendix-fixed-point-usage}]
+python main.py fixed-point <output-directory>
+    \end{lstlisting}
+    \\
+    For example:
+    \begin{lstlisting}[style=console,label={lst:appendix-fixed-point-example}]
+C:\User\CaseStudy> python main.py fixed-point ./images
+Root: 1.2345
+Error: 0.1234
+    \end{lstlisting}
+
+    \subsubsection{2D Newton-Raphson}\label{subsubsec:2d-nr-appendix}
+    Running this in your console will execute the 2D Newton-Raphson code.
+    \begin{lstlisting}[style=console,label={lst:appendix-2d-nr-usage}]
+python main.py 2d-nr
+    \end{lstlisting}
+    \\
+    For example:
+    \begin{lstlisting}[style=console,label={lst:appendix-2d-nr-example}]
+C:\User\CaseStudy> python main.py 2d-nr
+Root: [-1.2345, 1.2345]
+Root verification: [0. 0.]
+Hessian eigenvalues: [-12, 34]
+Stationary point nature: saddle point
+    \end{lstlisting}
+
+    \subsubsection{Boundary-value matrix problem}\label{subsubsec:bvp-appendix}
+    Running this in your console will execute the Boundary-value matrix problem code and
+    then save the plots to the output directory provided.
+    \begin{lstlisting}[style=console,label={lst:appendix-bvp-usage}]
+python main.py boundary <output-directory>
+    \end{lstlisting}
+    \\
+    For example:
+    \begin{lstlisting}[style=console,label={lst:appendix-bvp-example}]
+C:\User\CaseStudy> python main.py boundary ./images
+Order: 1.00
+    \end{lstlisting}
+
+    \subsubsection{Condensing the module}
+    Running this in your console will take the input directory, condense the module into a single file,
+    and save it to the output directory provided.
+    \begin{lstlisting}[style=console,label={lst:appendix-condensing-module-usage}]
+python main.py condense <input-directory> <output-directory>
+    \end{lstlisting}
+    \\
+    For example:
+    \begin{lstlisting}[style=console,label={lst:appendix-condensing-module-example}]
+C:\User\CaseStudy> python main.py condense ./case_study ./output.py
+    \end{lstlisting}
+
+    \subsection*{Condensed module code}\label{subsec:condensed-code}
+    I would put the following code into \texttt{case\_study.py} for the \texttt{main.py} code from above to work
+    directly with this.
+    Or you could remove the line that imports \texttt{case\_study.py} and paste the contents of
+    \textt{main.py} directly under the condensed code.
+    \lstinputlisting[label={lst:code_appendix}, style=python]{../code-examples/output.py}
+
+\end{document}

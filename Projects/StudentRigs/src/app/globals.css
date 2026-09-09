@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+:root {
+	--background: #121212;
+	--border: #1f1f1f;
+
+	--red-accent: #ff6f61;
+	--orange-accent: #f7b336;
+	--yellow-accent: #f5e642;
+	--green-accent: #54a14d;
+	--blue-accent: #3f9cda;
+	--purple-accent: #8d61df;
+
+	--primary-text: #ffffff;
+	--secondary-text: #cbd5e1;
+
+	--animation-duration: 150ms;
+}
+
+@layer components {
+	.underline-animation {
+		@apply relative;
+	}
+
+	.underline-animation::after {
+		@apply content-[''] absolute w-0 h-[0.1em] left-0 -bottom-[0.15em] 
+    bg-(--primary-text) duration-(--animation-duration);
+	}
+
+	.underline-animation:hover::after {
+		@apply w-full;
+	}
+
+	.button-animation {
+		@apply text-(--primary-text) border-(--primary-text) border-2 rounded-lg px-[0.75em] py-[0.3em]
+    transition-all duration-(--animation-duration) font-semibold;
+	}
+
+	.button-animation:hover {
+		@apply text-(--background) bg-(--primary-text);
+	}
+
+	.accent-gradient-text {
+		@apply bg-gradient-to-r from-(--red-accent) to-(--orange-accent) leading-tight bg-clip-text text-transparent;
+	}
+
+	.input-field {
+		@apply w-full rounded-lg outline outline-(--secondary-text)/22 p-2;
+		transition: outline-color calc(var(--animation-duration) / 3),
+			outline-width calc(var(--animation-duration) / 3);
+	}
+
+	.input-field:hover,
+	input.input-field:focus {
+		@apply outline-2 outline-(--primary-text);
+	}
+}
+
+@theme {
+	--animate-loading-spinner: loading-spinner 1s cubic-bezier(0.4, 0, 0.2, 1)
+		infinite;
+
+	@keyframes loading-spinner {
+		0% {
+			transform: rotate(45deg);
+		}
+		100% {
+			transform: rotate(405deg);
+		}
+	}
+
+	--animate-fade-out: fade-out 3s forwards;
+
+	@keyframes fade-out {
+		0% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0;
+		}
+	}
+}
+
+body {
+	background: var(--background);
+	color: var(--primary-text);
+	font-family: "Montserrat", sans-serif;
+}

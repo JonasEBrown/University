@@ -1,0 +1,79 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+    In this question I was asked to modify code to add tolerance to it.
+    I then was asked to add the golden-search method to find the minimum and evaluate the log value of the error
+    at each iteration.
+    You can find the code in under \hyperref[subsubsec:tolerance-golden-appendix]{Appendix: Optimisation}.
+
+    Producing these graphs:
+    \begin{figure}[H]
+        \begin{subfigure}
+            \centering
+            \includegraphics[width=0.5\textwidth]{optimisation-full-plot}
+            \caption{Plot of $f(x) = e^{-(x-\pi)} + x^2$.}
+            \label{fig:optimisation-full-plot}
+        \end{subfigure}
+        \begin{subfigure}
+            \centering
+            \includegraphics[width=0.5\textwidth]{optimisation-dichotomous-error}
+            \caption{Logarithmic dichotomous error against iteration step.}
+            \label{fig:optimisation-dichotomous-errors}
+        \end{subfigure}
+        \begin{subfigure}
+            \centering
+            \includegraphics[width=0.5\textwidth]{optimisation-golden-error}
+            \caption{Logarithmic golden-section error against iteration step.}
+            \label{fig:optimisation-golden-errors}
+        \end{subfigure}
+        \label{fig:optimisation-plots}
+    \end{figure}
+
+
+    The minimum occurs at $x \approx 1.839$.
+
+    As you can see, the error decreases quicker when using the dichotomous method,
+    meeting the tolerance in 17 steps opposed to 22 steps.
+    This is an expected result as dichotomous error halves each
+    iteration and the golden-search roughly decreases by a factor of 0.618 (1 over the golden ratio).
+
+    \subsection*{Further analysis}\label{subsec:further-analysis}
+
+    However, with further analysis of more factors, such as wall time and function calls,
+    we get the following graphs:
+
+    \begin{figure}[H]
+        \begin{subfigure}
+            \centering
+            \includegraphics[width=0.5\textwidth]{optimisation-dichotomous-function-calls}
+            \caption{Total dichotomous function calls for current iteration.}
+            \label{fig:optimisation-dichotomous-function-calls}
+        \end{subfigure}
+        \begin{subfigure}
+            \centering
+            \includegraphics[width=0.5\textwidth]{optimisation-golden-function-calls}
+            \caption{Total golden-section function calls for current iteration.}
+            \label{fig:optimisation-golden-function-calls}
+        \end{subfigure}
+        \label{fig:optimisation-plots-further-analysis}
+    \end{figure} \\
+
+    The linear nature of these plots allows us to estimate the number of function calls per iteration
+    rather easily.
+    We calculate that, on average, the dichotomous method has $2.8 \approx 3$ function calls per iteration and
+    the golden-search method has $0.97 \approx 1$ function call per iteration.
+    This is a significant improvement in performance and is evident when measuring the wall time of each method:
+    the dichotomous program runs for 6.4 milliseconds and the golden-search method runs for 0.2 milliseconds
+    ($\approx 32\times$ faster).
+    \\ \\
+    As an experienced programmer, these results are not surprising as function calls are far more
+    expensive than inline arithmetic calculations for CPUs and therefore minimising function calls should be
+    prioritised over the number of iterations when designing algorithms.
+    If required, function-dominated behaviour could be achieved by using \verb|time.sleep()|
+    to introduce an artificial delay within the function being minimised, but I don't recommend this for large numbers
+    of iterations as programs could take a long time to run.
+    \\ \\
+    If you're interested to know more, please read \hyperref[sec:why-are-function-calls-expensive]{Appendix: Why are function calls expensive?} for more information on this topic.
+
+\end{document}

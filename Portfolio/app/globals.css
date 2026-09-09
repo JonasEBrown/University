@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utlilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #0d0d0d;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0d0d0d;
+    --foreground: #ededed;
+    --animation-duration: 150;
+
+    --color1: 18, 113, 255;
+    --color2: 221, 74, 255;
+    --color3: 100, 220, 255;
+    --color4: 200, 50, 50;
+    --color5: 180, 180, 50;
+    --color-interactive: 0, 170, 91;
+    --circle-size: 80%;
+  }
+}
+
+@layer components {
+  .underline-animation {
+    @apply relative;
+  }
+
+  .underline-animation::after {
+    @apply content-[''] absolute w-0 h-[0.1em] left-0 -bottom-[0.15em] 
+    bg-(--color-foreground) duration-(--animation-duration);
+  }
+
+  .underline-animation:hover::after {
+    @apply w-full;
+  }
+
+  .button-animation {
+    @apply text-(--color-foreground) border-(--color-foreground) border-1 rounded-lg px-[0.75em] py-[0.3em]
+    transition-all duration-(--animation-duration) font-semibold;
+  }
+
+  .button-animation:hover {
+    @apply text-(--color-background) bg-(--color-foreground);
+  }
+
+  .gradient-background {
+    @apply w-screen h-screen overflow-hidden isolate;
+    /* filter: url(#goo) blur(4px); */
+  }
+
+  .bubble {
+    @apply absolute aspect-square rounded-full bg-no-repeat mix-blend-multiply;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}

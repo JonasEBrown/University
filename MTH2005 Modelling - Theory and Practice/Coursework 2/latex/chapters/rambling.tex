@@ -1,0 +1,133 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+    \section{Why are function calls expensive?}\label{sec:why-are-function-calls-expensive}
+
+    Python is an interpreted language (the interpreter standardly being CPython), which at runtime must:
+    \begin{itemize}
+        \item Parse the source code into an abstract syntax tree (AST).
+        \item Compile this into bytecode - these are a set of instructions for the computer to follow.
+        \item Execute that bytecode in an evaluation loop.
+    \end{itemize}\\
+    The overhead that function calls bring are mostly in the execution stage of runtime.
+    So, let's look at what happens when you call a simple function \verb|y = f(x)| during execution:
+    \begin{itemize}
+        \item Step 1: Evaluate the callable object \verb|f| (our function object).
+        \begin{itemize}
+            \item CPython looks up the name \verb|f| in each of the scopes of the program:
+            \begin{itemize}
+                \item \textbf{locals} - the variables within the current function, whatever that may be.
+                \item \textbf{enclosing scopes} - if the current function is nested (written inside another function with local variables).
+                \item \textbf{globals} - functions within the top scope (for example, constants defined at the top of the file).
+                \item \textbf{builtins} - functions/global variables like \verb|range|, \verb|max|, \verb|min|, etc.
+            \end{itemize}\\
+            \item The result from this lookup \textbf{must} be a callable object since we are actively calling \verb|f| with \verb|()| parenthesis.
+            \item This process is also not instant and add a cost to our function call already.
+        \end{itemize}\\
+        \item Step 2: The arguments passed, in this case \verb|x|, must then be evaluated.
+        \begin{itemize}
+            \item The expression within the parenthesis must is evaluated from left to right.
+            \item This could mean more name lookups (like above in Step 1), attribute lookups, or indexing.
+            \item The resulting argument values are then pushed onto the value stack.
+            \item This is an expensive part of the execution (evaluation and pushing to the stack).
+        \end{itemize}\\
+        \item Step 3: Building a call signature.
+        \begin{itemize}
+            \item \verb|f(x)| - creates a simple array of arguments.
+            \item \verb|f(x, y=3)| - builds a map of the keyword names (kwargs) to values (args).
+            \item \verb|f(*arg, **kwargs)| - unpacks mappings.
+        \end{itemize}\\
+        \item Step 4: Actually call the function - this uses a generic call structure.
+        \begin{itemize}
+            \item Checks if the object (\verb|f|) is callable (if it is a function).
+            \item Finds the appropriate entry (where to start execution from) to the function.
+            \item Fortunately, builtins are specifically made to be fast (using special routing) and use C-based methods, so these are less expensive to call.
+        \end{itemize}
+        \item Step 5: Creates a new, rather expensive, stack frame. This is an environment for the function to run within, containing:
+        \begin{itemize}
+            \item An instruction pointer - this tracks your position in the bytecode.
+            \item Local variables - this is for fast lookups described partly in Step 2.
+            \item Global/builtin references - so the function isn't limited to the local scope.
+            \item An evaluation stack.
+            \item Exception handling information.
+        \end{itemize}
+        \item Step 6: Binds arguments to parameters.
+        \begin{itemize}
+            \item CPython maps these onto the function's parameters:
+            \begin{itemize}
+                \item Positional parameters.
+                \item Keyword-only parameters.
+                \item Default values.
+                \item args and kwargs.
+            \end{itemize}
+            \item While also checking for errors:
+            \begin{itemize}
+                \item Missing required arguments.
+                \item Unexpected arguments/keywords.
+                \item Other general checks.
+            \end{itemize}
+        \end{itemize}
+        \item Step 7: Finally start to execute the bytecode.
+        \begin{itemize}
+            \item Initialisation of local variables.
+            \item Execution begins at the address of the entry point for \verb|f|.
+            \item CPython starts a bytecode evaluation loop for this new frame:
+            \begin{itemize}
+                \item Fetch the next bytecode instruction.
+                \item Decode instruction into an opcode.
+                \item Dispatch (jump) to a C code implementation of that opcode.
+                \item Manipulate the value stack to reflect result of operation.
+                \item Increment the instruction pointer and repeat.
+            \end{itemize}
+        \end{itemize}
+        \item Step 8: Create return value and teardown frame.
+        \begin{itemize}
+            \item Produces a return value object if necessary.
+            \item Removes the frame from the call stack.
+            \item Restores calling frame back to the current frame.
+            \item Pushes the return value onto the caller's evaluation stack.
+        \end{itemize}
+        \item Step 9: Assign result to \verb|y| - updates the local scope binding (of the calling scope) of \verb|y|.
+    \end{itemize}\\
+    Comparing with the steps for inline arithmetic, for example with \verb|y = x*x + 2|:
+    \begin{itemize}
+        \item Fetch next bytecode instruction.
+        \item Lookup \verb|x|, which is found within the \textbf{locals} array (this is the first lookup array, so extremely fast), and push the value of \verb|x| onto the value stack.
+        \\ \verb|stack = [x]|
+        \item Lookup \verb|x| a second time and push onto the stack.
+        \\ \verb|stack = [x, x]|
+        \item Multiply \verb|x * x|.
+        \begin{itemize}
+            \item Pop top two items from stack (\verb|x| and \verb|x|).
+            \\ \verb|stack = []|
+            \item Determine the correct multiplication operation for the runtime type of the variables (\verb|int|, \verb|float|, etc.).
+            \item Dispatch to a C code implementation (multiplication in this case).
+            \item Push result onto the stack.
+            \\ \verb|stack = [x_squared]|
+        \end{itemize}
+        \item Load \verb|2| and push onto the stack.
+        \\ \verb|stack = [x_squared, 2]|
+        \item Add \verb|x_squared + 2|.
+        \begin{itemize}
+            \item Pop top two items from stack (\verb|x_squared| and \verb|2|).
+            \\ \verb|stack = []|
+            \item Determine the correct addition operation for the runtime type of the variables (\verb|int|, \verb|float|, etc.).
+            \item Dispatch to a C code implementation (addition in this case).
+            \item Push result onto the stack.
+            \\ \verb|stack = [result]|
+        \end{itemize}
+        \item Store result into \verb|y|.
+        \begin{itemize}
+            \item Pop top item from stack (\verb|result|).
+            \\ \verb|stack = []|
+            \item Store \verb|result| in \verb|y|.
+        \end{itemize}
+    \end{itemize}
+
+    As you can see, inline arithmetic is much cheaper for the CPU as it doesn't require argument evaluation,
+    building call signatures, stack frame creation, binding of arguments, error handling, or creation of return values.
+    These are all relatively expensive operations and should be considered when choosing methods or algorithms when large amounts
+    of data or iterations are required.
+
+\end{document}

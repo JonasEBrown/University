@@ -1,0 +1,52 @@
+{
+	"Tags": [
+		{
+			"icon": "GraduationCap",
+			"text": "Student-friendly",
+			"color": "var(--blue-accent)"
+		},
+		{
+			"icon": "MapPin",
+			"text": "Free Local Delivery",
+			"color": "var(--purple-accent)"
+		}
+	],
+	"Features": [
+		{
+			"icon": "Wrench",
+			"title": "Bespoke Builds",
+			"text": "PCs designed around your budget and needs.",
+			"color": "var(--red-accent)"
+		},
+		{
+			"icon": "MonitorCog",
+			"title": "Fully Customisable",
+			"text": "Choose every detail - from components to case, even your preferred OS.",
+			"color": "var(--orange-accent)"
+		},
+		{
+			"icon": "Cable",
+			"title": "Ready to Go",
+			"text": "Delivered OS installed and fully set up - just plug and play.",
+			"color": "var(--yellow-accent)"
+		},
+		{
+			"icon": "MapPin",
+			"title": "Local Service",
+			"text": "Free local delivery and quick assistance.",
+			"color": "var(--green-accent)"
+		},
+		{
+			"icon": "Cpu",
+			"title": "Upgrade Ready",
+			"text": "Easily swap out parts for upgrades in the future.",
+			"color": "var(--blue-accent)"
+		},
+		{
+			"icon": "ReceiptText",
+			"title": "Warranty",
+			"text": "Peace of mind with hardware warranties from manufacturers and local support.",
+			"color": "var(--purple-accent)"
+		}
+	]
+}

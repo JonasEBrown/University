@@ -1,0 +1,51 @@
+%! Author = Jonas Brown
+%! Date = 18/10/2025
+
+% Preamble
+\documentclass[9pt]{extreport}
+
+% Packages
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+\usepackage{listings}
+\usepackage{subfiles}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{tcolorbox}
+\usepackage{titlesec}
+\usepackage{etoolbox}
+\tcbuselibrary{listings, skins}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+\usepackage{chngcntr}
+\counterwithout{figure}{section}
+
+\include{styles}
+
+\graphicspath{{./images}}
+
+\title{
+    \begin{center}
+        \reallybigtenb{MTH2005}
+
+        \reallybigtenb{Case Study 2}
+    \end{center}
+}
+\author{Jonas Brown}
+\date{}
+
+\begin{document}
+
+    \maketitle
+
+    \chapter{Introduction}\label{ch:introduction}
+    \subfile{chapters/introduction.tex}
+
+    \subfile{chapters/questions.tex}
+
+    \chapter{Appendix}\label{ch:appendix}
+    \subfile{chapters/appendix.tex}
+
+\end{document}

@@ -1,0 +1,173 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+    \subsection*{Verify SOR solves $A\vec{x}=\vec{b}$}\label{subsec:verify-sor-solves-linear-problem}
+
+    We are given the SOR equation
+    \begin{center*}
+        \begin{align*}
+            \\
+            & \vec{x}^{(n+1)} = (D+ \epsilon L)^{-1}[\epsilon \vec{b} - (\epsilon U + (\epsilon - 1)D)\vec{x}^{(n)}] && \\
+        \end{align*}
+    \end{center*}
+    Where $A = L + D + U$. Rearranging this we get
+    \begin{center*}
+        \begin{align*}
+            \\
+            & \vec{x}^{(n+1)} = (D+ \epsilon L)^{-1}[\epsilon \vec{b} - (\epsilon U + (\epsilon - 1)D)\vec{x}^{(n)}] && \\
+            & (D+ \epsilon L) \vec{x}^{(n+1)} = \epsilon \vec{b} - (\epsilon U + (\epsilon - 1)D)\vec{x}^{(n)} \\
+            & D\vec{x}^{(n+1)} - D\vec{x}^{(n)} = \epsilon \vec{b} - (\epsilon U + \epsilon D)\vec{x}^{(n)} - \epsilon L \vec{x}^{(n+1)} && \\
+        \end{align*}
+    \end{center*}\\
+    Now, at convergence, we know that $\vec{x}^{(n+1)} = \vec{x}^{(n)} = \vec{x}^{\ast}$, so
+    \begin{center*}
+        \begin{align*}
+            \\
+            & D\vec{x}^{(n+1)} - D\vec{x}^{(n)} = \epsilon \vec{b} - (\epsilon U + \epsilon D)\vec{x}^{(n)} - \epsilon L \vec{x}^{(n+1)} && \\
+            & D\vec{x}^{\ast} - D\vec{x}^{\ast} = 0 = \epsilon \vec{b} - (\epsilon U + \epsilon D)\vec{x}^{\ast} - \epsilon L \vec{x}^{\ast} && \\
+            & (\epsilon U + \epsilon D)\vec{x}^{\ast} + \epsilon L \vec{x}^{\ast} = \epsilon \vec{b} && \\
+            & \epsilon(L + D + U)\vec{x}^{\ast} = \epsilon \vec{b} && \\
+            & A \vec{x}^{\ast} = \vec{b} && \\
+        \end{align*}
+    \end{center*}
+
+    \subsection*{Derivation of matrix $B$}\label{subsec:derivation-of-matrix}
+
+    We are given
+    \begin{center*}
+        \begin{align*}
+            & A = \begin{pmatrix}
+                6 & -2 \\
+                -2 & 4
+            \end{pmatrix} && \\
+        \end{align*}
+    \end{center*}\\
+    Which gives
+    \begin{center*}
+        \begin{align*}
+            & L = \begin{pmatrix}
+                0 & 0 \\
+                -2 & 0
+            \end{pmatrix},\quad
+            D = \begin{pmatrix}
+                6 & 0 \\
+                0 & 4
+            \end{pmatrix},\quad
+            U = \begin{pmatrix}
+                0 & -2 \\
+                0 & 0
+            \end{pmatrix} && \\
+        \end{align*}
+    \end{center*}\\
+    Now, from $\vec{x}^{(n+1)} = \vec{c} - B\vec{x}^{(n)}$ and our original SOR equation, we can deduce that
+    \begin{center*}
+        \begin{align*}
+            & \vec{c} = (D + \epsilon L)^{-1}(\epsilon \vec{b}),\quad B = (D + \epsilon L)^{-1}(\epsilon U + (\epsilon - 1)D) && \\
+        \end{align*}
+    \end{center*}
+    To write this in terms of $\epsilon$, find $(D + \epsilon L)^{-1}$:
+    \begin{center*}
+        \begin{align*}
+            & D + \epsilon L = \begin{pmatrix}
+                6 & 0 \\
+                0 & 4
+            \end{pmatrix} + \epsilon \begin{pmatrix}
+                0 & 0 \\
+                -2 & 0
+            \end{pmatrix} = \begin{pmatrix}
+                6 & 0 \\
+                -2 \epsilon & 4
+            \end{pmatrix} && \\
+            & (D + \epsilon L)^{-1} = \frac{1}{(6\times4)-(0\times-2\epsilon)} \begin{pmatrix}
+                4 & 0 \\
+                2 \epsilon & 6
+            \end{pmatrix} = \begin{pmatrix}
+                \frac{1}{6} & 0 \\
+                \frac{\epsilon}{12} & \frac{1}{4}
+            \end{pmatrix} && \\
+        \end{align*}
+    \end{center*}\\
+    Compute $\epsilon U + (\epsilon - 1)D$:
+    \begin{center*}
+        \begin{align*}
+            & \epsilon U + (\epsilon - 1)D = \epsilon \begin{pmatrix}
+                0 & -2 \\
+                0 & 0
+            \end{pmatrix} + (\epsilon - 1) \begin{pmatrix}
+                6 & 0 \\
+                0 & 4
+            \end{pmatrix} && \\
+            & \epsilon U + (\epsilon - 1)D = \begin{pmatrix}
+                6(\epsilon - 1) & -2\epsilon \\
+                0 & 4(\epsilon - 1)
+            \end{pmatrix} && \\
+        \end{align*}
+    \end{center*}\\
+    Now, find $B$:
+    \begin{center*}
+        \begin{align*}
+            & B = (D + \epsilon L)^{-1}(\epsilon U + (\epsilon - 1)D) && \\
+            & B = \begin{pmatrix}
+                \frac{1}{6} & 0 \\
+                \frac{\epsilon}{12} & \frac{1}{4}
+            \end{pmatrix} \begin{pmatrix}
+                6(\epsilon - 1) & -2\epsilon \\
+                0 & 4(\epsilon - 1)
+            \end{pmatrix} && \\
+            & B = \begin{pmatrix}
+                (\epsilon - 1) & -\frac{\epsilon}{3} \\
+                \frac{\epsilon}{2}(\epsilon - 1) & -\frac{\epsilon^{2}}{6} + (\epsilon - 1)
+            \end{pmatrix} && \\
+        \end{align*}
+    \end{center*}
+
+    \subsubsection{Spectral radius method to rank choices of $\epsilon$}\label{subsubsec:spectral-radius-of-b}
+
+    Let $\lambda_{1}, \dots, \lambda_{n}$ be the eigenvalues of matrix $B$.
+    The spectral radius of $B$ is then defined as
+    \begin{center*}
+        \begin{align*}
+            & \rho(B) = \max\{{|\lambda_{1}|, \dots, |\lambda_{n}|}\} && \\
+        \end{align*}
+    \end{center*}
+    So, for each of the $\epsilon$ given, we can find the spectral radius $\rho$ of $B$:
+    \begin{itemize}
+        \item $\epsilon = 1$ (Gauss-Seiel case):
+            \begin{center*}
+                \begin{align*}
+                    & B = \begin{pmatrix}
+                            0 & -\frac{1}{3} \\
+                            0 & -\frac{1}{6}
+                        \end{pmatrix} \implies \lambda_{1} = 0, \lambda_{2} = -\frac{1}{6} \implies \rho(B) = \frac{1}{6} \approx 0.1667 && \\
+                \end{align*}
+            \end{center*}
+        \item $\epsilon = 0.97$ (under-relaxation):
+            \begin{center*}
+                \begin{align*}
+                    & B = \begin{pmatrix}
+                            -0.03 & -0.32333 \\
+                            -0.01455 & -0.18682
+                        \end{pmatrix} \implies \rho(B) = 0.2126 && \\
+                \end{align*}
+            \end{center*}
+        \item $\epsilon = 1.03$ (over-relaxation):
+            \begin{center*}
+                \begin{align*}
+                    & B = \begin{pmatrix}
+                            0.03 & -0.34333 \\
+                            0.01545 & -0.14682
+                        \end{pmatrix} \implies \rho(B) = 0.1085 && \\
+                \end{align*}
+            \end{center*}
+    \end{itemize}\\
+    Now, since a system will converge faster with smaller eigenvalues, we can see that
+    over-relaxation gives the fastest convergence. \\
+
+    SOR introduces a variable $\epsilon$ that allows us to tune $B$ and hence minimise $\rho(B)$ to
+    allow for faster convergence.
+    In the example above, we can see that a small change in $\epsilon$ from 1 to 1.03
+    caused a 54\% increase in convergence rate.
+    Therefore, I would conclude that SOR is an improvement over the Gauss-Seidel method.
+
+\end{document}

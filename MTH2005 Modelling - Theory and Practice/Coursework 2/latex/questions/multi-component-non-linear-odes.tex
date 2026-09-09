@@ -1,0 +1,45 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+    I was asked to write code to solve the following three-dimensional set of non-linear ODEs:
+    \\
+    \begin{center*}
+        \begin{align*}
+            & \frac{dx}{dt} = -ax^{3} + 3byz^{4} && \\
+            & \frac{dy}{dt} = ax^{3} - byz^{2} && \\
+            & \frac{dz}{dt} = -byz^{2} + c\sin{x} && \\
+        \end{align*}
+    \end{center*}\\
+
+    The code can be found under \hyperref[subsec:multi-component-non-linear-odes-appendix]{Appendix: Multi-component non-linear ODEs}
+    and can be adjusted for different intial conditions, $a, b, c$ variables, timestep, and max iterations.
+    \\ \\
+    But, with the conditions given in the brief: \\
+    \begin{center*}
+        \begin{align*}
+            & a = 1,\quad b = -1.5,\quad c = 0.2 && \\
+            & x(0) = 1,\quad y(0) = 0,\quad z(0) = 0.5 && \\
+            & \Delta t = 0.001,\quad t_{max} = 20 && \\
+        \end{align*}
+    \end{center*} \\
+
+    We get the following graphs:
+
+    \begin{figure}[H]
+        \begin{subfigure}
+            \centering
+            \includegraphics[width=0.5\textwidth]{runge-kutta-2}
+            \caption{Runge-Kutta 2 $x$, $y$, and $z$ values against time $t$.}
+            \label{fig:runge-kutta-2}
+        \end{subfigure}
+        \begin{subfigure}
+            \centering
+            \includegraphics[width=0.5\textwidth]{runge-kutta-4}
+            \caption{Runge-Kutta 4 $x$, $y$, and $z$ values against time $t$.}
+            \label{fig:runge-kutta-4}
+        \end{subfigure}
+        \label{fig:runge-kutta}
+    \end{figure} \\
+
+\end{document}
