@@ -5,5 +5,4 @@
 #     "CairoMakie",
 # ])
 
-include("DynamicalSystems")
-
+using DynamicalSystems

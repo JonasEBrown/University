@@ -68,7 +68,7 @@ end
 function system_heatmap(
     sys::DSystem;
     n_tesselation::Int = 75,
-    n_initial_conditions::Int = 1000,
+    # n_initial_conditions::Int = 1000,
     recurrences_kw = (
         ;
         # consecutive_recurrences = 4000,
@@ -95,7 +95,7 @@ function system_heatmap(
 
     sampler = PrescribedICs(allics)
 
-    fs, labels = basins_fractions(mapper, sampler)
+    fs, labels = basins_fractions_labels(mapper, sampler)
 
     basins = reshape(labels, length(ugrid), length(wgrid))
 

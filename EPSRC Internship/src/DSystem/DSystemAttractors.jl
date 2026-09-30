@@ -390,7 +390,7 @@ function plot_system_trajectories(
         xlabels = "dim1",
         sharex = true,
         ylabels = "dim2",
-        size = (900, 600),
+        size = (600 * cols, 600),
         backgroundcolor = :white,
     )
 
