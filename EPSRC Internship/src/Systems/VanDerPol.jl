@@ -12,7 +12,7 @@ struct VDPParameters
     VDPParameters(
         parameters::DSystemParameters;
         lims::Tuple{Vararg{NTuple{2, Float64}}} = (
-            (-6.0, 6.0), (-6.0, 6.0)
+            (-10.0, 10.0), (-10.0, 10.0)
         ),
         name::String = "VanDerPol",
         Δω::Float64 = parameters.Δω,
@@ -37,7 +37,7 @@ struct VDPParameters
         ϵ = 1.0,
 
         lims::Tuple{Vararg{NTuple{2, Float64}}} = (
-            (-6.0, 6.0), (-6.0, 6.0), (-6.0, 6.0), (-6.0, 6.0)
+            (-10.0, 10.0), (-10.0, 10.0), (-10.0, 10.0), (-10.0, 10.0)
         ),
 
         name::String = "VanDerPol",
