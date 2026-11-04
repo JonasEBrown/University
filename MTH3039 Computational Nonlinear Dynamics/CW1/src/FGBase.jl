@@ -1,7 +1,7 @@
 function fg_base(
     ds,
     featurizer,
-    r,
+    grouping_radius,
     ics;
     filepath = nothing,
     grouper = simple_grouping,
@@ -21,7 +21,7 @@ function fg_base(
 
     features = featurizer.(trajectories)
 
-    basins, centers = grouper(features, r)
+    basins, centers = grouper(features, grouping_radius)
 
     attractors = Dict{Int, StateSpaceSet}(
         idx => trajectories[findfirst(==(center), features)]

@@ -105,7 +105,7 @@ axes_grid!(
             fig[row, col];
             xlabel = xlabels[((col - 1) * rows) + row],
             ylabel = ylabels[((col - 1) * rows) + row],
-            title = titles[((col - 1) * rows) + row],
+            title = isnothing(titles) ? "" : titles[((col - 1) * rows) + row],
         )
         for col in 1:cols
         for row in 1:rows
@@ -188,4 +188,34 @@ function get_period(trajectory::StateSpaceSet; Δt = 1.0)
         ) * Δt
         for axis in eachcol(trajectory)
     ]
+end
+
+magnitude_and_direction(v::AbstractVector; metric = norm) = [
+    metric(
+        v,
+        zeros(
+            length(v)
+        )
+    ),
+    atan(v[2], v[1])
+]
+
+# Sample cycle.
+function sample_limit_cycle(
+    system,
+    attractor,
+    steps;
+    Δt = 0.05,
+)
+    positions = []
+    period = get_period(attractor; Δt = Δt)[1]
+    δt = period / steps
+
+    set_state!(system, attractor[end])
+    for _ in 1:steps
+        push!(positions, current_state(system))
+        step!(system, δt)
+    end
+
+    return positions
 end

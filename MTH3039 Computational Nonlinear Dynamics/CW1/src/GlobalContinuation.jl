@@ -56,7 +56,7 @@ function global_continuation(
     ics,
     parameters::AbstractDict{Int};
 
-    r = 1,
+    grouping_radius = 1,
     path = nothing,
     
     featurizer = predator_prey_featurizer,
@@ -100,7 +100,7 @@ function global_continuation(
         basins, attractors, fractions = fg2(
             system,
             featurizer,
-            r,
+            grouping_radius,
             ics;
             Ttr = Ttr,
             T = T,

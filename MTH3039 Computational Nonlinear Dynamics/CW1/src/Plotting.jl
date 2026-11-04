@@ -260,7 +260,8 @@ function plot_simple_grouping(
     return fig, axis 
 end
 
-function plot_basins_of_attraction_heatmap(
+function plot_basins_of_attraction_heatmap!(
+    axis,
     ics,
     basins;
     attractors = nothing,
@@ -268,8 +269,9 @@ function plot_basins_of_attraction_heatmap(
     colors = COLORS,
     sckwargs = (
         ;
-    ),
-    kwargs...
+        strokewidth = 0.5,
+        strokecolor = :white,
+    )
 )
     x = sort(unique(ic[1] for ic in ics))
     y = sort(unique(ic[2] for ic in ics))
@@ -280,16 +282,6 @@ function plot_basins_of_attraction_heatmap(
         basin => SVector(-Inf, -Inf)
         for basin in unique(basins)
     ) : attractors
-
-    fig = Figure(
-        ;
-        size = PLOT_SIZE,
-    )
-
-    axis = Axis(
-        fig[1, 1];
-        kwargs...,
-    )
 
     heatmap_basins_attractors!(
         axis,
@@ -304,9 +296,96 @@ function plot_basins_of_attraction_heatmap(
         colors = colors,
         sckwargs = sckwargs,
     )
-
-    return fig, axis
 end
+
+function plot_basins_of_attraction_heatmaps(
+    ics,
+    basins;
+    titles = nothing,
+    attractors = nothing,
+    fractions = nothing,
+    colors = COLORS,
+    xlabel = "x",
+    ylabel = "y",
+    kwargs...
+)
+    plots = length(basins)
+    cols = Int(ceil(sqrt(plots)))
+    rows = Int(ceil(plots / cols))
+
+    fig, axes = axes_grid(
+        rows, cols;
+        titles = titles,
+        xlabels = [xlabel for _ in 1:plots],
+        ylabels = [ylabel for _ in 1:plots],
+    )
+
+    [
+        plot_basins_of_attraction_heatmap!(
+            axes[idx],
+            ics,
+            basins_value;
+            attractors = isnothing(attractors) ? nothing : attractors[idx],
+            fractions = isnothing(fractions) ? nothing : fractions[idx],
+            colors = colors,
+        )
+        for (idx, basins_value) in enumerate(basins)
+    ]
+
+    return fig, axes
+end
+
+function plot_basins_of_attraction_heatmaps(
+    ics,
+    data::Dict;
+    titles = nothing,
+    colors = COLORS,
+    xlabel = "x",
+    ylabel = "y",
+    kwargs...
+)
+    plots = length(data)
+    cols = Int(ceil(sqrt(plots)))
+    rows = Int(ceil(plots / cols))
+
+    fig, axes = axes_grid(
+        rows, cols;
+        titles = titles,
+        xlabels = [xlabel for _ in 1:plots],
+        ylabels = [ylabel for _ in 1:plots],
+    )
+
+    [
+        plot_basins_of_attraction_heatmap!(
+            axes[idx],
+            ics,
+            value[1];
+            attractors = value[2],
+            fractions = value[3],
+            colors = colors,
+            kwargs...
+        )
+        for (idx, (_, value)) in enumerate(data)
+    ]
+
+    return fig, axes
+end
+
+plot_basins_of_attraction_heatmap(
+    ics,
+    basins;
+    attractors = nothing,
+    fractions = nothing,
+    colors = COLORS,
+    kwargs...
+) = plot_basins_of_attraction_heatmaps(
+    ics,
+    [basins];
+    attractors = isnothing(attractors) ? nothing : [attractors],
+    fractions = isnothing(fractions) ? nothing : [fractions],
+    colors = colors,
+    kwargs...
+)
 
 function plot_basins_and_attractors_split(
     ics,
@@ -469,10 +548,10 @@ function plot_minimum_critical_shock!(
         lines!(
             axis,
             ellipse(
-                position,
+                position...,
                 ellipse_x,
                 ellipse_x * ratio * (viewpoint_width / viewport_height),
-            )...,
+            )...;
             color = color,
             circle_kwargs...,
         )
@@ -497,15 +576,15 @@ function plot_minimum_critical_shock(
     attractors,
     fractions,
     show_radius = false,
-    xlabel = "Prey population",
-    ylabel = "Predator population",
+    xlabel = "x",
+    ylabel = "y",
     sckwargs = (
         strokewidth = 0.5,
         strokecolor = :white,
     ),
     kwargs...
 )
-    fig, axis = plot_basins_of_attraction_heatmap(
+    fig, axes = plot_basins_of_attraction_heatmap(
         ics,
         basins;
         attractors = attractors,
@@ -515,6 +594,7 @@ function plot_minimum_critical_shock(
         sckwargs = sckwargs,
         kwargs...,
     )
+    axis = axes[1]
 
     for (source_ic, shock) in mcs
         plot_minimum_critical_shock!(
@@ -524,6 +604,37 @@ function plot_minimum_critical_shock(
             show_radius = show_radius,
         )
     end
+
+    return fig, axis
+end
+
+function plot_limit_cycle_susceptibility(
+    susceptibilities;
+    scaling = 15 / 0.05,
+    xlabel = "Phase (radians)",
+    ylabel = "Susceptibility",
+)
+    fig = Figure(
+        ;
+        size = PLOT_SIZE,
+    )
+
+    axis = Axis(
+        fig[1, 1];
+        xlabel = xlabel,
+        ylabel = ylabel,
+    )
+
+    x = StateSpaceSet(collect(keys(susceptibilities)))
+    phases = naive_phases(x, scaling)
+
+    y = collect(values(susceptibilities))
+
+    scatter!(
+        axis,
+        phases,
+        y;
+    )
 
     return fig, axis
 end

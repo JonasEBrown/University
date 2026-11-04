@@ -1,10 +1,15 @@
+find_basin(
+    source_ic,
+    basins;
+) = basins[argmin(norm(source_ic - ic) for ic in ics)]
+
 function minimum_critical_shock(
     source_ic,
     ics,
     basins;
     metric = mymetric,
 )
-    source_basin = basins[argmin(norm(source_ic - ic) for ic in ics)]
+    source_basin = find_basin(source_ic, basins)
     return ics[
         argmin(
             [
@@ -63,7 +68,7 @@ function find_metric_switch_interval(
     return nothing
 end
 
-function limit_cycle_minimum_critical_shock(
+limit_cycle_minimum_critical_shock(
     system,
     cycle_attractor,
     ics,
@@ -71,23 +76,82 @@ function limit_cycle_minimum_critical_shock(
     samples = 50,
     metric = mymetric,
     Δt = 0.05,
+) = Dict(
+    position => minimum_critical_shock(
+        position,
+        ics,
+        basins;
+        metric = metric,
+    )
+    for position in sample_limit_cycle(
+        system,
+        cycle_attractor,
+        samples;
+        Δt = Δt,
+    )
 )
-    period = get_period(cycle_attractor; Δt = Δt)[1]
-    sampling_time = period / samples
-    
-    limit_cycle_mcs = Dict()
-    set_state!(system, cycle_attractor[end])
 
-    for _ in 1:samples
-        state = current_state(system)
-        limit_cycle_mcs[state] = minimum_critical_shock(
-            state,
-            ics,
-            basins;
+function minimum_critical_shock_averages(
+    mcs;
+    metric = mymetric,
+)
+    mcs_vectorised = values(mcs)
+
+    average_mcs_vector = mean(mcs_vectorised)
+    average_mcs_vector_magnitude, average_mcs_vector_direction = magnitude_and_direction(
+        average_mcs_vector;
+        metric = metric,
+    )
+
+    average_magnitudes, average_directions = mean(
+        reduce(
+            vcat,
+            [
+                magnitude_and_direction(
+                    mcs_value;
+                    metric = metric,
+                )
+                for mcs_value in mcs_vectorised
+            ]'
+        ), 
+        dims = 1,
+    )
+
+    return (
+        average_mcs_vector_magnitude,
+        average_mcs_vector_direction
+    ),
+    (
+        average_magnitudes,
+        average_directions
+    )
+end
+
+function limit_cycle_susceptibility(
+    mcs;
+    metric = mymetric,
+)
+    magnitudes = Dict(
+        key => magnitude_and_direction(
+            mcs[key];
             metric = metric,
-        )
-        step!(system, sampling_time)
-    end
+        )[1]
+        for key in collect(keys(mcs))
+    )
+    max_magnitude = maximum(collect(values(magnitudes)))
+    return Dict(key => magnitude / max_magnitude  for (key, magnitude) in magnitudes)
+end
 
-    return limit_cycle_mcs
+function basin_transferable_fraction(
+    source_basins,
+    new_basins,
+    attractor;
+)
+    total_ics = length(source_basins)
+    source_basin = find_basin(attractor[end], basins)
+    return count(
+        idx -> (source_basins[idx] != new_basins[idx]
+                && source_basins[idx] == source_basin),
+        1:total_ics
+    ) / total_ics
 end

@@ -1,8 +1,9 @@
 # import Pkg
 
 # Pkg.add([
-#     "DynamicalSystems",
+#     "JLD2",
 #     "CairoMakie",
+#     "DynamicalSystems",
 # ])
 
 using JLD2

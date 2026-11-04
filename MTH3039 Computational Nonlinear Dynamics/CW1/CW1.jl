@@ -106,6 +106,37 @@ fg2(
     kwargs...
 )
 
+function random_r_sim(
+    ds,
+    m,
+    n,
+    metric;
+    u0 = [5.0, 0.01],
+    r_values = [1.6, 2.55],
+)
+    trues = 0
+    r_values = [r_values..., r_values[1]]
+
+    for _ in 1:m
+        set_state!(ds, u0)
+        set_parameter!(ds, 1, r_values[1])
+        step!(ds, randomtime())
+
+        for _ in 1:n
+            for r in r_values[2:end]
+                set_parameter!(ds, 1, r)
+                step!(ds, randomtime())
+            end
+        end
+
+        trues += Int(metric([0, 0], current_state(ds)) < 1e-6)
+    end
+    
+    return trues / m
+end
+
+# Brief-defined functions.
+
 h(
     X::StateSpaceSet
 ) = length(
@@ -139,3 +170,5 @@ function naive_phases(X::StateSpaceSet, scaling)
     ys = X[:, 2] .- center[2]
     return atan.(scaling .* ys, xs)
 end
+
+randomtime() = 13*(2 + rand())
