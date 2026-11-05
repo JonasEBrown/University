@@ -283,19 +283,23 @@ function plot_basins_of_attraction_heatmap!(
         for basin in unique(basins)
     ) : attractors
 
-    heatmap_basins_attractors!(
+    heatmap!(
         axis,
-        grid,
-        basins,
-        attractors;
-        labels = Dict(
-            basin => isnothing(fractions)
-                ? "$(basin)" : "$(round(fractions[basin], digits=2))"
-            for basin in unique(basins)
-        ),
-        colors = colors,
-        sckwargs = sckwargs,
+        grid...,
+        basins;
+        colormap = colors,
+        colorrange = (1, length(colors)),
     )
+    for (idx, attractor) in attractors
+        scatter!(
+            axis,
+            attractor;
+            color = colors[idx],
+            label = isnothing(fractions)
+                        ? "$(idx)" : "$(round(fractions[idx], digits=2))",
+            sckwargs...,
+        )
+    end
 end
 
 function plot_basins_of_attraction_heatmaps(
@@ -392,16 +396,10 @@ function plot_basins_and_attractors_split(
     basins,
     attractors;
     colors = COLORS,
-    sckwargs = (),
     xlabel = "x",
     ylabel = "y",
     kwargs...
 )
-    x = sort(unique(ic[1] for ic in ics))
-    y = sort(unique(ic[2] for ic in ics))
-
-    grid = (x, y)
-
     fig, axes = axes_grid(
         1, 2;
         titles = ["BoA of system", "Attractors of system"],
@@ -409,16 +407,16 @@ function plot_basins_and_attractors_split(
         ylabels = [ylabel, ylabel],
     )
 
-    heatmap_basins_attractors!(
+    plot_basins_of_attraction_heatmap!(
         axes[1, 1],
-        grid,
-        basins,
-        Dict(
+        ics,
+        basins;
+        attractors = Dict(
             basin => SVector(-Inf, -Inf)
             for basin in unique(basins)
-        );
+        ),
         colors = colors,
-        sckwargs = sckwargs
+        kwargs...
     )
 
     for (basin, attractor) in attractors

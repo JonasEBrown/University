@@ -20,14 +20,14 @@ function h_improved_featurizer(
     )
 end
 
-task_3_measurement_feature_collector(_, attractor, fraction) = [
+task_3_measurement_feature_collector(attractor, fraction) = [
     fraction,
     maximum(attractor[:, 1]),
     maximum(attractor[:, 2]),
     std(attractor[:, 1]),
 ]
 
-task_3_6_measurement_feature_collector(_, attractor, fraction) = [
+task_3_6_measurement_feature_collector(attractor, fraction) = [
     fraction,
     mean(attractor[:, 1]),
     span(attractor[:, 1]),

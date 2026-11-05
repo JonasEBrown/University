@@ -6,18 +6,15 @@ function fg_base(
     filepath = nothing,
     grouper = simple_grouping,
     return_fractions = false,
-    kwargs...
+    return_basins_matrix = true,
+    kwargs...,
 )
-    trajectories = load_trajectories(filepath)
-
-    if isnothing(trajectories)
-        trajectories = evolve_ics(
-            ds,
-            ics;
-            filepath = filepath,
-            kwargs...
-        )
-    end
+    trajectories = get_trajectories(
+        filepath,
+        ds,
+        ics;
+        kwargs...,
+    )
 
     features = featurizer.(trajectories)
 
@@ -28,8 +25,10 @@ function fg_base(
         for (idx, center) in enumerate(centers)
     )
 
+    basins = return_basins_matrix ? flat_vector_to_matrix(basins) : basins
+
     if !return_fractions
-        return flat_vector_to_matrix(basins), attractors
+        return basins, attractors
     end
 
     total_basins = count(>(0), basins)
@@ -38,5 +37,19 @@ function fg_base(
         for (idx, basin) in enumerate(unique(basins))
     )
 
-    return flat_vector_to_matrix(basins), attractors, fractions
+    return basins, attractors, fractions
 end
+
+fg2(
+    filepath,
+    featurizer,
+    r;
+    kwargs...
+) = fg_base(
+    nothing,
+    featurizer,
+    r,
+    nothing;
+    filepath = filepath,
+    kwargs...,
+)

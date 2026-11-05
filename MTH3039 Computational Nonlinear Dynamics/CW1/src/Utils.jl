@@ -61,6 +61,22 @@ load_trajectories(
     path::Union{String, Nothing}
 ) = !isnothing(path) && isfile(path) ? get(JLD2.load(path), "trajectories", nothing) : nothing
 
+function get_trajectories(
+    filepath,
+    ds,
+    ics;
+    kwargs...,
+)
+    trajectories = load_trajectories(filepath)
+
+    return isnothing(trajectories) ? evolve_ics(
+        ds,
+        ics;
+        filepath = filepath,
+        kwargs...
+    ) : trajectories
+end
+
 # Convert 1D vector to square matrix.
 function flat_vector_to_matrix(
     vec::AbstractVector

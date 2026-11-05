@@ -56,6 +56,8 @@ function global_continuation(
     ics,
     parameters::AbstractDict{Int};
 
+    ic_samples = 1000,
+
     grouping_radius = 1,
     path = nothing,
     
@@ -78,13 +80,15 @@ function global_continuation(
     }}()
 
     next_id = 1
-    global_basins, global_attractors, global_fractions = Matrix{Int}[], Dict{Int, StateSpaceSet}[], Dict{Int, Float64}[]
+    global_attractors, global_fractions = Dict{Int, StateSpaceSet}[], Dict{Int, Float64}[]
     
     parameters_vectorised = [parameters[k] for k in sort(collect(keys(parameters)))]
     first_param_range = first(parameters_vectorised)
     continuation_count = length(first_param_range)
 
     ids = Vector{Vector{Int}}(undef, continuation_count)
+
+    total_ics = length(ics)
 
     for idx in 1:continuation_count
         filepath = "$(isnothing(path) ? "" : "$(path)/")trajectories_$(idx).jld2"
@@ -97,20 +101,33 @@ function global_continuation(
             )
         end
 
-        basins, attractors, fractions = fg2(
+        ics_copy = copy(ics)
+        sampled_ics = [
+            splice!(
+                ics_copy,
+                Int(
+                    ceil(
+                        (total_ics - i + 1) * rand()
+                    )
+                )
+            )
+            for i in 1:ic_samples
+        ]
+
+        _, attractors, fractions = fg2(
             system,
             featurizer,
             grouping_radius,
-            ics;
+            sampled_ics;
+            filepath = filepath,
             Ttr = Ttr,
             T = T,
             Dt = Δt,
             grouper = grouper,
-            filepath = filepath,
+            return_basins_matrix = false,
             kwargs...,
         )
 
-        push!(global_basins, basins)
         push!(global_attractors, attractors)
         push!(global_fractions, fractions)
     end
@@ -120,7 +137,6 @@ function global_continuation(
     measurements = [
         [
             i <= length(global_attractors[idx]) ? measurement_collector(
-                global_basins[idx][i],
                 global_attractors[idx][i],
                 global_fractions[idx][i];
             ) : missing
