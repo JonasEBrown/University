@@ -33,8 +33,8 @@ function fg_base(
 
     total_basins = count(>(0), basins)
     fractions = Dict{Int, Float64}(
-        idx => count(==(basin), basins) / total_basins
-        for (idx, basin) in enumerate(unique(basins))
+        basin => count(==(basin), basins) / total_basins
+        for basin in keys(attractors)
     )
 
     return basins, attractors, fractions

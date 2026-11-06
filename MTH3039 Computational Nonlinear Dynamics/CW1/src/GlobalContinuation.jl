@@ -1,7 +1,7 @@
 function match_attractors(
     old_attractors,
     new_attractors,
-    old_ids;
+    old_basins;
     match_tolerance = Inf,
     distance_function = centeroid_distance,
     next_id = nothing,
@@ -9,7 +9,7 @@ function match_attractors(
     used_old, used_new = Set{Int}(), Set{Int}()
     matches = Tuple{Int, Int}[]
 
-    new_ids = zeros(Int, length(new_attractors))
+    new_basins = zeros(Int, length(new_attractors))
 
     distances = sort!(
         [
@@ -24,31 +24,40 @@ function match_attractors(
         by = first
     )
 
-    for (distance, o, n) in distances
-        if distance <= match_tolerance && (
-                !(o in used_old) &&
-                !(n in used_new)
-            )
-            new_ids[n] = old_ids[o]
-            
-            push!(used_old, o)
-            push!(used_new, n)
-            push!(matches, (o, n))         
+    if !isempty(distances)
+        distance, o, n = first(distances)
+        total_distances = length(distances)
+        
+        idx = 1
+        while distance <= match_tolerance
+            if (
+                    !(o in used_old) &&
+                    !(n in used_new)
+                )
+                new_basins[n] = old_basins[o]
+                
+                push!(used_old, o)
+                push!(used_new, n)
+                push!(matches, (o, n))
+            end
+            idx += 1
+            idx > total_distances && break
+            distance, o, n = distances[idx]
         end
     end
 
     if isnothing(next_id)
-        next_id = isempty(old_ids) ? 1 : (maximum(old_ids) + 1)
+        next_id = isempty(old_basins) ? 1 : (maximum(old_basins) + 1)
     end
 
-    for n in eachindex(new_ids)
+    for n in eachindex(new_basins)
         if !(n in used_new)
-            new_ids[n] = next_id
+            new_basins[n] = next_id
             next_id += 1
         end
     end
 
-    return new_ids, next_id, matches
+    return new_basins, next_id, matches
 end
 
 function global_continuation(
@@ -59,6 +68,8 @@ function global_continuation(
     ic_samples = 1000,
 
     grouping_radius = 1,
+    match_tolerance = Inf,
+
     path = nothing,
     
     featurizer = predator_prey_featurizer,
@@ -85,8 +96,6 @@ function global_continuation(
     parameters_vectorised = [parameters[k] for k in sort(collect(keys(parameters)))]
     first_param_range = first(parameters_vectorised)
     continuation_count = length(first_param_range)
-
-    ids = Vector{Vector{Int}}(undef, continuation_count)
 
     total_ics = length(ics)
 
@@ -132,20 +141,6 @@ function global_continuation(
         push!(global_fractions, fractions)
     end
 
-    max_attractors = maximum(length.(global_attractors))
-
-    measurements = [
-        [
-            i <= length(global_attractors[idx]) ? measurement_collector(
-                global_attractors[idx][i],
-                global_fractions[idx][i];
-            ) : missing
-            for i in 1:max_attractors
-        ]
-        for idx in eachindex(global_attractors)
-    ]
-    max_measurements = length(first(first(measurements))) + 1
-
     for (idx, current_attractors) in enumerate(global_attractors)
         possible_ids = sort!(
             [
@@ -164,25 +159,30 @@ function global_continuation(
             old_attractors,
             current_attractors,
             possible_ids;
+            match_tolerance = match_tolerance,
             distance_function = distance_function,
             next_id = next_id,
         )
 
-        ids[idx] = copy(new_ids)
-
         for i in eachindex(current_attractors)
             id = new_ids[i]
 
-            pushfirst!(measurements[idx][i], first_param_range[idx])
+            measurements = [
+                first_param_range[idx];
+                measurement_collector(
+                    current_attractors[i],
+                    global_fractions[idx][i],
+                )
+            ]
 
             if !haskey(tracked, id)
                 tracked[id] = [
                     Vector{Union{Missing, Any}}(missing, continuation_count)
-                    for _ in 1:max_measurements
+                    for _ in eachindex(measurements)
                 ]
             end
 
-            for (j, value) in enumerate(measurements[idx][i])
+            for (j, value) in enumerate(measurements)
                 tracked[id][j][idx] = value
             end
 
@@ -190,33 +190,6 @@ function global_continuation(
                 attractor = current_attractors[i],
                 last = idx,
             )
-        end
-    end
-
-    if (track_vanishing_attractors
-        && is_cyclic_parameter_sweep(parameters_vectorised)
-        && length(global_attractors) > 1)
-        _, _, wrap_matches = match_attractors(
-            global_attractors[end],
-            global_attractors[1],
-            ids[end];
-            distance_function = distance_function,
-            next_id = next_id,
-        )
-
-        for (old, new) in wrap_matches
-            first_id, last_id = ids[1][new], ids[end][old]
-            if last_id != first_id
-                for i in eachindex(tracked[first_id])
-                    for j in eachindex(tracked[first_id][i])
-                        if ismissing(tracked[first_id][i][j])
-                            tracked[first_id][i][j] = tracked[last_id][i][j]
-                        end
-                    end
-                end
-
-                delete!(tracked, last_id)
-            end
         end
     end
 

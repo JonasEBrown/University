@@ -27,7 +27,7 @@
 function dbscan_grouping(
     features,
     r;
-    min_points = 2,
+    min_points = 10,
 )
     n = length(features)
 
@@ -102,10 +102,24 @@ function dbscan_grouping(
     end
 
     # Find first entry for each label and use it as a the center of the cluster.
-    centers = [
-        features[findfirst(==(c), labels)]
-        for c in 1:cluster
-    ]
+    centers = []
+    for c in 1:cluster
+        members = findall(==(c), labels)
+        members_mean = mean(features[members])
+        push!(
+            centers,
+            features[
+                members[
+                    argmin(
+                        [
+                            norm(features[i] - members_mean)
+                            for i in members
+                        ]
+                    )
+                ]
+            ]
+        )
+    end
 
     return labels, centers
 end

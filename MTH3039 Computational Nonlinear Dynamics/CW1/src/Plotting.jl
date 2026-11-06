@@ -522,7 +522,7 @@ function plot_minimum_critical_shock!(
     position,
     mcs;
     show_radius = false,
-    color = :red,
+    color = "#900C37",
     circle_kwargs = (
         ;
         linewidth = 2,

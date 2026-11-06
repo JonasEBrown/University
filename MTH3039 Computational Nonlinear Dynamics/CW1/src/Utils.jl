@@ -3,16 +3,14 @@ span(A::Union{<:Vector, <:Tuple}) = maximum(A) - minimum(A)
 
 # General distance functions.
 centeroid_distance(A::StateSpaceSet, B::StateSpaceSet) = norm(mean(A) - mean(B))
-euclidean_distance(trs::AbstractVector...) = norm(
-    sum(
-        [
-            mean(tr[:, 1]),
-            span(tr[:, 1]),
-        ] * (
-            idx == 1 ? 1 : -1
-        )
-        for (idx, tr) in enumerate(trs)
-    )
+euclidean_distance(A::StateSpaceSet, B::StateSpaceSet) = norm(
+    [
+        mean(A[:, 1]),
+        span(A[:, 1]),
+    ] - [
+        mean(B[:, 1]),
+        span(B[:, 1]),
+    ]
 )
 
 # Trajectory shorthand.
@@ -33,16 +31,19 @@ function evolve_ics(
     Dt = 0.05,
     kwargs...
 )
-    trs = map(
-        ic -> system_trajectory(
-            ds,
-            ic;
+    trs = Vector{StateSpaceSet}(undef, length(ics))
+
+    Threads.@threads for i in eachindex(ics)
+        local_ds = deepcopy(ds)
+
+        trs[i] = system_trajectory(
+            local_ds,
+            ics[i];
             t = T,
             Δt = Dt,
-            kwargs...
-        )[1],
-        ics
-    )
+            kwargs...,
+        )[1]
+    end
 
     if !isnothing(filepath)
         JLD2.save(
