@@ -28,19 +28,36 @@ function estimate_phase_difference(
     x::Vector,
     y::Vector,
 )
+    N = length(x)
+
     x_norm = x .- mean(x) # Normalise x and y.
     y_norm = y .- mean(y)
-
-    N = length(x_norm)
 
     # Pad x and y.
     x_padded = vcat(x_norm, zeros(N))
     y_padded = vcat(y_norm, zeros(N))
 
     # Compute cross-correlation.
-    cross_correlation = ifft(fft(x_padded) .* conj(fft(y_padded))) |> real
+    cross_correlation = real(
+        ifft(
+            fft(x_padded) .* conj(
+                fft(y_padded)
+            )
+        )
+    )
 
-    lag = argmax(cross_correlation[1:N]) - 1
+    cross_correlation = vcat(
+        cross_correlation[1:N],
+        cross_correlation[
+            (2N):-1:(N+2)
+        ]
+    )
+
+    lag = argmax(cross_correlation) - 1
+
+    if lag > (N / 2)
+        lag -= N
+    end
 
     return 2π * lag / N
 end
@@ -147,18 +164,27 @@ function is_fixed_and_oscillatory(
     )
 end
 
+# function is_synchronised(
+#     periods::Vector{Float64};
+#     tolerance::Float64 = 1e-3
+# )
+#     period_differences = get_period_differences(periods)
+
+#     synchronised = [
+#         period_differences[j][i] < tolerance
+#         for i in eachindex(period_differences[1]), j in eachindex(period_differences)
+#     ]
+
+#     return all(synchronised)
+# end
+
 function is_synchronised(
-    periods::Vector{Float64};
+    phase_differences::Vector{Float64};
     tolerance::Float64 = 1e-3
 )
-    period_differences = get_period_differences(periods)
-
-    synchronised = [
-        period_differences[j][i] < tolerance
-        for i in eachindex(period_differences[1]), j in eachindex(period_differences)
-    ]
-
-    return all(synchronised)
+    return all(
+        abs.(phase_differences) .< tolerance
+    )
 end
 
 function classify_attractor(
@@ -201,7 +227,7 @@ struct AttractorAnalysis
         phase_differences = estimate_attractor_phase_differences(attractor)
 
         is_fixed_and_osc = is_fixed ? false : is_fixed_and_oscillatory(amplitudes)
-        is_synchronous = is_fixed ? false : (is_fixed_and_osc ? false : is_synchronised(periods))
+        is_synchronous = is_fixed ? false : (is_fixed_and_osc ? false : is_synchronised(phase_differences))
 
         classification = is_fixed ? :fixed_point : classify_attractor(is_fixed_and_osc)
 
