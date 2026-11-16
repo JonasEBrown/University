@@ -124,6 +124,7 @@ function interactive_dsystem(
     sys::DSystem,
     u0s::Vector{<:AbstractVector{Float64}};
     idxs::Vector{Int} = [2, 4],
+    Δt::Float64 = 0.05,
     kwargs...
 )
     parameter_sliders = Dict(1 => 0.0:0.001:0.5)
@@ -137,7 +138,7 @@ function interactive_dsystem(
         lims = sys.parameters.lims[1:length(idxs)],
         parameter_sliders = parameter_sliders,
         parameter_names = parameter_names,
-        Δt = 0.05,
+        Δt = Δt,
         add_controls = true,
         # figure = (
         #     ;

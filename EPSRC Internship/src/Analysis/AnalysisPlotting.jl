@@ -79,6 +79,8 @@ function plot_system_attractor_count(
         mkpath(path)
     end
 
+    max_attractor_count = standard_attractor_count^2
+
     @showprogress for k in k_values
         filename_attractors = "$(path)/k_$(k)_attractors.jld2"
 
@@ -99,6 +101,8 @@ function plot_system_attractor_count(
 
         attractor_count = count(!, fixed_points) + Int(any(fixed_points))
 
+        max_attractor_count = max(max_attractor_count, attractor_count)
+
         scatter!(
             ax, k,
             attractor_count;
@@ -110,15 +114,14 @@ function plot_system_attractor_count(
     hlines!(ax, [standard_attractor_count], 0:last(k_values))
 
     min_k, max_k = minimum(k_values), maximum(k_values)
-    max_attractors = standard_attractor_count^2
 
     x_tick_count = 10
     x_tick_step = abs(max_k - min_k) / x_tick_count
 
     ax.xticks = min_k:x_tick_step:max_k
-    ax.yticks = 0:1:max_attractors
+    ax.yticks = 0:1:max_attractor_count
 
-    ax.limits = ((maximum([(min_k - x_tick_step), 0]), (max_k + x_tick_step)), (0, max_attractors + 1))
+    ax.limits = ((maximum([(min_k - x_tick_step), 0]), (max_k + x_tick_step)), (0, max_attractor_count + 1))
 end
 
 attractor_count_label_func(i, standard_attractor_count = 3) = "$(i < standard_attractor_count + 1 ? i - 1 : "$(i - 1)+") synchronised"

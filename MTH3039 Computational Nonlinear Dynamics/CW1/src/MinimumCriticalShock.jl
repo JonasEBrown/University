@@ -138,8 +138,8 @@ function limit_cycle_susceptibility(
         )[1]
         for key in collect(keys(mcs))
     )
-    max_magnitude = maximum(collect(values(magnitudes)))
-    return Dict(key => magnitude / max_magnitude  for (key, magnitude) in magnitudes)
+    min_magnitude = minimum(collect(values(magnitudes)))
+    return Dict(key => min_magnitude / magnitude  for (key, magnitude) in magnitudes)
 end
 
 function basin_transferable_fraction(
